@@ -16,7 +16,7 @@ const bot2Schema = new Schema({
   },
   welcomeMsg: {
     type: String,
-    default: "welcome",
+    default: "welcome👋",
   },
 });
 

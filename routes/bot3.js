@@ -3,7 +3,7 @@ const router = express.Router();
 const Bot3 = require("../models/bot3");
 //setting the 4 crud operations for bod3(get,post,update,delete)
 //get
-//We would get the bot3 in our database and would send them all as a response
+//We would get all the bot3 in our database and would send them all as a response
 router.get("", function (req, res, next) {
   Bot3.find({})
     .then(function (bot3) {
@@ -38,8 +38,7 @@ router.delete("/:id", function (req, res, next) {
     .catch(next);
 });
 //get
-//it will check if the bot3 has an intent of making a sound, and the permission to do so
-//if it has will return a sound in respond
+//will check the auth/username+password that the user supplied,if correct will make api call
 router.get("/:id/:auth", function (req, res, next) {
   Bot3.findOne({ _id: req.params.id })
     .then(function (bot3) {
@@ -49,6 +48,7 @@ router.get("/:id/:auth", function (req, res, next) {
       ) {
         res.send("make_api_call");
       }
+      res.send("Unauthorized");
     })
     .catch(next);
 });

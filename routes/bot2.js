@@ -3,7 +3,7 @@ const router = express.Router();
 const Bot2 = require("../models/bot2");
 //setting the 4 crud operations for bod2(get,post,update,delete)
 //get
-//We would get the bot2 in our database and would send them all as a response
+//We would get all the bot2 in our database and would send them all as a response
 router.get("", function (req, res, next) {
   Bot2.find({})
     .then(function (bot2) {
@@ -38,32 +38,33 @@ router.delete("/:id", function (req, res, next) {
     .catch(next);
 });
 //get
-//We would get the bot2 in our database and would send them all as a response
-router.put("/:id", function (req, res, next) {
+//this get will check if the intent supplied is default_welcome_message and if so
+//generate the new welcome msg that the user provided
+router.get("/:id/:intent/:wlcm_msg", function (req, res, next) {
   Bot2.findOne({ _id: req.params.id })
     .then(function (bot2) {
       if (
-        bot2.intent.includes(req.body.get("intent")) &&
-        req.body.get("welcomeMsg")
-      ) {
-        bot2.welcomeMsg = req.body.get("welcomeMsg");
-        bot2.save();
-        // res.send(bot2.welcomeMsg);
-      } else if (
-        !bot2.intent.includes(req.body.get("intent")) &&
-        req.body.get("welcomeMsg")
-      ) {
-        bot2.intent.push(req.body.get("intent"));
-        bot2.welcomeMsg = req.body.get("welcomeMsg");
-        bot2.save();
-      } else if (
-        !bot2.intent.includes(req.params.intent) &&
-        !req.params.welcomeMsg
-      ) {
-        bot2.intent.push(req.body.get("intent"));
-        bot2.save();
-      }
-      res.send(bot2.welcomeMsg);
+        // bot2.intent.includes(req.body.get("intent")) &&
+        req.params.intent === "default_welcome_message" &&
+        req.params.wlcm_msg
+      )
+        res.send(req.params.wlcm_msg);
+      // res.send(bot2.welcomeMsg);
+      else if (req.params.intent != "default_welcome_message")
+        res.send("False intent");
+    })
+    .catch(next);
+});
+//this get will check if the intent supplied is default_welcome_message and if so
+//generate the default welcome msg
+router.get("/:id/:intent", function (req, res, next) {
+  Bot2.findOne({ _id: req.params.id })
+    .then(function (bot2) {
+      if (req.params.intent === "default_welcome_message")
+        res.send(bot2.welcomeMsg);
+      // res.send(bot2.welcomeMsg);
+      else if (req.params.intent != "default_welcome_message")
+        res.send("False intent");
     })
     .catch(next);
 });
